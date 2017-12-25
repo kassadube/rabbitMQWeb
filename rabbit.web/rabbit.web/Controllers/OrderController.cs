@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using EasyNetQ;
+using rabbit.Messages;
 
 namespace rabbit.web.Controllers
 {
@@ -16,9 +17,12 @@ namespace rabbit.web.Controllers
         [HttpPost]
         public IActionResult Post([FromBody]TeslaOrder order)
         {
-            var messageBus = RabbitHutch.CreateBus("host=localhost");
-            using(var publishChannel = messageBus..op)
-            return Ok();
+            using (var bus = RabbitHutch.CreateBus("host=localhost"))
+            {
+                bus.Publish(order);
+            }
+            
+                return Ok();
         }
 
         // POST api/values
